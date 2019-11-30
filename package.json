@@ -1,0 +1,23 @@
+{
+	"name": "web-vmstats",
+	"version": "0.0.1",
+	"description": "Web vmstats",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/stevenjoezhang/web-vmstats.git"
+	},
+	"keywords": [
+		"Vmstats",
+		"Websocket"
+	],
+	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
+	"license": "GPL-3.0-or-later",
+	"dependencies": {
+		"express": "^4.17.1",
+		"ws": "^7.2.0"
+	}
+}
