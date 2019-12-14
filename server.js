@@ -39,18 +39,16 @@ server.listen(config.port, () => {
 
 var WebSocket = require("ws"),
 	wss = new WebSocket.Server({
-		verifyClient: socketVerify,
 		clientTracking: true,
 		maxPayload: 1300,
 		server
 	});
 
-function socketVerify(info) {
+server.on('upgrade', (request, socket, head) => {
 	if (config.debug) {
-		console.log("[New User]", info.req.headers["sec-websocket-protocol"], info.origin, info.req.url, info.secure);
+		console.log("[New User]", request.headers["sec-websocket-protocol"], request.headers.origin, request.url);
 	}
-	return true;
-}
+});
 
 wss.on("error", error => {
 	if (config.debug) {
