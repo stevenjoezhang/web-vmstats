@@ -20,21 +20,32 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const os = require("os");
+const chalk = require("chalk");
 const { spawn } = require("child_process");
-
-var config = require(process.argv[2] || "./config.json");
-
-if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
-	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
-	config.port = 9000;
-}
 
 app.use(express.static(path.join(__dirname, "public")));
 
 const http = require("http");
 const server = http.createServer(app);
-server.listen(config.port, () => {
-	console.log("Server listening at port %d", config.port);
+
+var config = require(process.argv[2] || "./config.json");
+if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
+	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
+	config.port = 9000;
+}
+var port = process.env.PORT || config.port;
+server.listen(port, () => {
+	console.log(chalk.yellow("Server available on:"));
+	const ifaces = os.networkInterfaces();
+	Object.keys(ifaces).forEach(dev => {
+		ifaces[dev].forEach(details => {
+			if (details.family === 'IPv4') {
+				console.log((`  http://${details.address}:${chalk.green(port.toString())}`));
+			}
+		});
+	});
+	console.log("Hit CTRL-C to stop the server");
 });
 
 var WebSocket = require("ws"),
