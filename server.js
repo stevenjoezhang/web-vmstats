@@ -29,12 +29,12 @@ app.use(express.static(path.join(__dirname, "public")));
 const http = require("http");
 const server = http.createServer(app);
 
-var config = require(process.argv[2] || "./config.json");
+const config = require(process.argv[2] || "./config.json");
 if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
 	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
 	config.port = 9000;
 }
-var port = process.env.PORT || config.port;
+const port = process.env.PORT || config.port;
 server.listen(port, () => {
 	console.log(chalk.yellow("Server available on:"));
 	const ifaces = os.networkInterfaces();
@@ -48,7 +48,7 @@ server.listen(port, () => {
 	console.log("Hit CTRL-C to stop the server");
 });
 
-var WebSocket = require("ws"),
+const WebSocket = require("ws"),
 	wss = new WebSocket.Server({
 		clientTracking: true,
 		maxPayload: 1300,
@@ -61,17 +61,17 @@ server.on('upgrade', (request, socket, head) => {
 	}
 });
 
-wss.on("error", error => {
+wss.on("error", err => {
 	if (config.debug) {
 		console.error("[ERROR] " + err);
 	}
 });
 
-var child = spawn("/usr/bin/vmstat", ["-n", "1"]);
+const child = spawn("/usr/bin/vmstat", ["-n", "1"]);
 
 child.stdout.on("data", chunk => {
 	if (!wss) return;
-	var result = chunk.toString().replace("\n", "");
+	const result = chunk.toString().replace("\n", "");
 	wss.clients.forEach(client => {
 		client.send(result);
 	});

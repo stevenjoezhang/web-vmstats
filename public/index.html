@@ -12,9 +12,9 @@
 <main id="charts">
 </main>
 <script>
-var allTimeSeries = {};
-var allValueLabels = {};
-var descriptions = {
+const allTimeSeries = {};
+const allValueLabels = {};
+let descriptions = {
     Processes: {
         r: "Number of processes waiting for run time",
         b: "Number of processes in uninterruptible sleep"
@@ -48,9 +48,9 @@ var descriptions = {
 
 function streamStats() {
 
-    var protocol = location.protocol.replace("http", "ws");
-    var ws = new ReconnectingWebSocket(`${protocol}//${location.host}`);
-    var colHeadings = [
+    const protocol = location.protocol.replace("http", "ws");
+    const ws = new ReconnectingWebSocket(`${protocol}//${location.host}`);
+    const colHeadings = [
         "r", "b", "swpd",
         "free", "buff", "cache",
         "si", "so", "bi",
@@ -68,8 +68,8 @@ function streamStats() {
     };
 
     ws.onmessage = function(e) {
-        var colValues = e.data.trim().split(/ +/);
-        var stats = {};
+        const colValues = e.data.trim().split(/ +/);
+        const stats = {};
         for (let i in colHeadings) {
             stats[colHeadings[i]] = parseInt(colValues[i], 10);
         }
@@ -79,7 +79,7 @@ function streamStats() {
 
 function initCharts() {
     for (let [sectionName, values] of Object.entries(descriptions)) {
-        var section = document.createRange().createContextualFragment(`
+        const section = document.createRange().createContextualFragment(`
             <section class="chart">
                 <h2 class="title">${sectionName}</h2>
                 <canvas width="600" height="80"></canvas>
@@ -87,7 +87,7 @@ function initCharts() {
                 </ul>
             </section>`);
 
-        var smoothie = new SmoothieChart({
+        const smoothie = new SmoothieChart({
             grid: {
                 sharpLines: true,
                 verticalSections: 5,
@@ -101,12 +101,12 @@ function initCharts() {
         });
         smoothie.streamTo(section.querySelector("canvas"), 1000);
 
-        var colors = chroma.brewer["Pastel2"];
-        var index = 0;
+        const colors = chroma.brewer["Pastel2"];
+        let index = 0;
         for (let [name, valueDescription] of Object.entries(values)) {
-            var color = colors[index++];
+            const color = colors[index++];
 
-            var timeSeries = new TimeSeries();
+            const timeSeries = new TimeSeries();
             smoothie.addTimeSeries(timeSeries, {
                 strokeStyle: color,
                 fillStyle: chroma(color).darken().alpha(0.5).css(),
@@ -114,7 +114,7 @@ function initCharts() {
             });
             allTimeSeries[name] = timeSeries;
 
-            var statLine = document.createRange().createContextualFragment(`
+            const statLine = document.createRange().createContextualFragment(`
             <li class="stat" style="color: ${color};" title="${valueDescription}">
                 <span class="stat-name">${name}</span>
                 <span class="stat-value"></span>
@@ -128,7 +128,7 @@ function initCharts() {
 
 function receiveStats(stats) {
     for (let [name, value] of Object.entries(stats)) {
-        var timeSeries = allTimeSeries[name];
+        const timeSeries = allTimeSeries[name];
         if (timeSeries) {
             timeSeries.append(Date.now(), value);
             allValueLabels[name].innerText = value;
