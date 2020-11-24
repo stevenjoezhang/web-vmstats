@@ -16,44 +16,24 @@
  *  GNU General Public License for more details.
  */
 
-//https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
-const express = require("express");
-const app = express();
+// https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
+const MiServer = require("mimi-server");
 const path = require("path");
-const os = require("os");
-const chalk = require("chalk");
-const { spawn } = require("child_process");
-
-app.use(express.static(path.join(__dirname, "public")));
-
-const http = require("http");
-const server = http.createServer(app);
 
 const config = require(process.argv[2] || "./config.json");
-if (!(config.port >= 0 && config.port < 65536 && config.port % 1 === 0)) {
-	console.error("[ERROR] `port` argument must be an integer >= 0 and < 65536. Default value will be used.");
-	config.port = 9000;
-}
-const port = process.env.PORT || config.port;
-server.listen(port, () => {
-	console.log(chalk.yellow("Server available on:"));
-	const ifaces = os.networkInterfaces();
-	Object.keys(ifaces).forEach(dev => {
-		ifaces[dev].forEach(details => {
-			if (details.family === 'IPv4') {
-				console.log((`  http://${details.address}:${chalk.green(port.toString())}`));
-			}
-		});
-	});
-	console.log("Hit CTRL-C to stop the server");
-});
 
-const WebSocket = require("ws"),
-	wss = new WebSocket.Server({
-		clientTracking: true,
-		maxPayload: 1300,
-		server
-	});
+const { server } = new MiServer({
+	port: process.env.PORT || config.port,
+	static: path.join(__dirname, "public")
+});
+const { spawn } = require("child_process");
+
+const WebSocket = require("ws");
+const wss = new WebSocket.Server({
+	clientTracking: true,
+	maxPayload: 1300,
+	server
+});
 
 server.on('upgrade', (request, socket, head) => {
 	if (config.debug) {
