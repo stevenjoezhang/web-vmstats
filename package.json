@@ -4,13 +4,11 @@
   "private": true,
   "description": "Web vmstats",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/stevenjoezhang/web-vmstats.git"
-  },
+  "repository": "stevenjoezhang/web-vmstats",
   "keywords": [
     "Vmstats",
     "Websocket"

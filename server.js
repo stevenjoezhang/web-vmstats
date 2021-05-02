@@ -17,18 +17,21 @@
  */
 
 // https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js
-const MiServer = require("mimi-server");
-const path = require("path");
+import MiServer from "mimi-server";
 
-const config = require(process.argv[2] || "./config.json");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json"));
 
 const { server } = new MiServer({
 	port: process.env.PORT || config.port,
 	static: path.join(__dirname, "public")
 });
-const { spawn } = require("child_process");
-
-const WebSocket = require("ws");
+import { spawn } from "child_process";
+import WebSocket from "ws";
 const wss = new WebSocket.Server({
 	clientTracking: true,
 	maxPayload: 1300,
