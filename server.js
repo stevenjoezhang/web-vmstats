@@ -24,7 +24,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json"));
+const config = JSON.parse(fs.readFileSync(process.argv[2] || "./config.json", "utf-8"));
 
 const { server } = new MiServer({
 	port: process.env.PORT || config.port,
